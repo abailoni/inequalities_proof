@@ -1,0 +1,161 @@
+\documentclass[12pt]{article}
+
+\usepackage{answers}
+\usepackage{setspace}
+
+
+\usepackage{multicol}
+\usepackage{mathrsfs}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+ 
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb} % define this before the line numbering.
+
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{wrapfig}
+\usepackage[export]{adjustbox}
+% \usepackage{caption}
+\usepackage{color}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{mathrsfs}
+\newcommand*{\QEDA}{\hfill\ensuremath{\blacksquare}}%
+
+% \newcommand{\TODO}[1]{{\color{red} TODO: #1}}
+
+\newcommand\TODO[1]{\fbox{\textcolor{red}{TODO: #1}}}
+
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+% algorithm env
+\usepackage[]{algorithm2e}
+
+% eps support
+\usepackage{epstopdf}
+\DeclareGraphicsExtensions{.eps}
+
+% subfigure support
+\usepackage{subcaption}
+
+% nice tables
+\usepackage{booktabs}
+
+\usepackage{algpseudocode}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}{Definition}[section]
+
+ 
+\begin{document}
+ 
+% --------------------------------------------------------------
+%                         Start here
+% --------------------------------------------------------------
+ 
+\title{MWS and path inequalities}%replace with the appropriate homework number
+% \author{Steffen Wolf\\
+% Alberto Bailoni}
+ 
+\maketitle
+% \subsection{Some definitions}
+% Proof by induction that the current defined algorithm is optimal:
+% \begin{itemize}
+% \item $t=1$: this case is trivial because there are no contraints and the MWS algorithm always add the first edge (here $A_{0} = \emptyset$). Thus $A_{1} = \left\{ e_{1} \right\} \subseteq A^{*}$
+% \item Let us assume that $A_{t-1}\subseteq A^*$ and we want to prove $A_{t}\subseteq A^*$
+% \end{itemize}
+\section{Some definitions}
+
+\begin{definition}
+The vertex labeling $\mathcal{L}$ of $\mathcal{G}$ is defined as a map $\mathcal{L}: V \rightarrow L $, where $L$ is an arbitrary set of labels;
+\end{definition}
+
+\begin{definition}
+The \emph{boundary} $\partial \mathcal{L}$ of a vertex labeling $\mathcal{L}$ is defined as the edge set $\partial \mathcal{L} = \left\{ e_{u,v}\in E | \mathcal{L}(u) \neq \mathcal{L}(v)\right\}$
+\end{definition}
+
+\begin{theorem}
+It is easy to show that for any graph $\mathcal{G}=(V,E)$ and a set of edges $S\subseteq E$, $S$ is a graph cut on $\mathcal{G}$ if and only if there exists a labeling $\mathcal{L}$ s.t. $S=\partial \mathcal{L}$. 
+\end{theorem}
+
+\begin{definition}
+Let $S$ be a cut on $G$, let $e\in S$,  and let $G^{'}=(V,E\setminus(S\setminus {e}))$. The segment $S^{(e)}$ of $S$ corresponding to $e$ is defined as:
+\begin{equation}
+S^{(e)} = \left\{ e_{u,v} \big| e_{u,v} \in S, u \underset{G'}{\sim}v   \right\}.
+\end{equation}
+\end{definition}
+
+
+\section{Path inequalities}
+\begin{theorem}
+(Assume for simplicity and without loss of generality that $\mathcal{G}$ is connected). If we run the MWS algorithm until termination, we get a final active set ${A = A^{+} \cup A^{-}}$, where $A^{+} \subseteq E^+$ and $A^{-} \subseteq E^-$. For every edge $\tilde{e}=(u,v)$ not in the active set, i.e. $\tilde{e} \in E\setminus A^*$, it exists a path $\pi$ from $u$ to $v$ such that:
+\begin{enumerate}
+\item the path is included in the active set: $\pi \subseteq A^*$,  \label{cond_1} 
+\item the path includes exactly zero or one repulsive edges: $\left| \pi \cap E^{-}  \right| \leq 1$, \label{cond_2}
+\item the weight of the weakest edge along the path is higher than the weights of $\tilde{e}$: \label{cond_3}
+\[ 
+w(\tilde{e}) < \min_{p\in \pi}  (w(p)).
+\]
+\end{enumerate} 
+\end{theorem}
+\begin{proof}
+
+
+
+Let us define:
+\begin{itemize}
+\item The set $A^{+}$ is a spanning forest on $\mathcal{G}$ and defines a graph cut $S$ and a vertex labeling $\mathcal{L}$.
+\end{itemize}
+
+Some properties of the active set and the final cut:
+\begin{itemize}
+    \item We note that the repulsive active set $A^{-}$ is simply given by all the repulsive edges on the final cut: $A^{-} = S \cap E^{-}$ (it follows from the algorithm definition).
+\end{itemize}
+
+\begin{theorem}
+Prova
+\end{theorem}
+\begin{proof}
+Ciao
+\end{proof}
+
+
+\TODO{I could also use $\underset{(V,A^{*})}{u\thicksim v}$}
+
+Depending on the type of edge $\tilde{e}$, we consider three different cases and we show that the theorem holds for all of them.
+
+\noindent \textbf{Case 1: Attractive edge not in the active set and NOT on final cut} 
+
+$\tilde{e} \in E^+ \setminus S^* $
+
+ $A^* \cap E^+$ defines a spanning forest on $(V,E)$ associated to the cut $S^*$. Thus, the existence of a path $\pi \subseteq A^* \cap E^+$ from $u$ to $v$ directly follows from $\tilde{e} \notin S^* $ (see Fig. \ref{fig:proof_case_1}). Particularly, there is only one path fulfilling conditions \hyperref[cond_1]{1} and \hyperref[cond_2]{2}.  
+
+\noindent \textbf{Case 2: Attractive edge not in the active set and on final cut}  
+
+$\tilde{e} \in E^+ \cap S^* $
+
+
+\noindent \textbf{Case 3: Repulsive edge not in the active set} 
+
+$\tilde{e} \in E^-$
+
+
+First, we note that the only repulsive edges in the active set $A^*$ are those on the cut $S^*$:
+\begin{equation}
+E^- \cap S^* = E^- \cap A^*.
+\end{equation}
+ Thus, in this third case $\tilde{e} \notin S^*$ and all paths $\pi$ \TODO{introduce a new notation..?} fulfilling conditions \hyperref[cond_1]{1} and \hyperref[cond_2]{2} do not include any repulsive edge (see Fig. \ref{fig:proof_case_3}). 
+\end{proof}
+
+
+\end{document}
