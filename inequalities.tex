@@ -52,9 +52,14 @@
 \usepackage{algpseudocode}
 
 \newtheorem{theorem}{Theorem}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{observation}{Observation}[section]
 \newtheorem{corollary}{Corollary}[theorem]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{definition}{Definition}[section]
+
+\newcommand{\propautorefname}{Proposition}
+\newcommand{\observationautorefname}{Observation}
 
  
 \begin{document}
@@ -85,7 +90,7 @@ The \emph{boundary} $\partial \mathcal{L}$ of a vertex labeling $\mathcal{L}$ is
 \end{definition}
 
 \begin{theorem}
-It is easy to show that for any graph $\mathcal{G}=(V,E)$ and a set of edges $S\subseteq E$, $S$ is a graph cut on $\mathcal{G}$ if and only if there exists a labeling $\mathcal{L}$ s.t. $S=\partial \mathcal{L}$. 
+For any graph $\mathcal{G}=(V,E)$ and a set of edges $S\subseteq E$, $S$ is a graph cut on $\mathcal{G}$ if and only if there exists a labeling $\mathcal{L}$ s.t. $S=\partial \mathcal{L}$. 
 \end{theorem}
 
 \begin{definition}
@@ -97,52 +102,67 @@ S^{(e)} = \left\{ e_{u,v} \big| e_{u,v} \in S, u \underset{G'}{\sim}v   \right\}
 
 
 \section{Path inequalities}
-\begin{theorem}
-(Assume for simplicity and without loss of generality that $\mathcal{G}$ is connected). If we run the MWS algorithm until termination, we get a final active set ${A = A^{+} \cup A^{-}}$, where $A^{+} \subseteq E^+$ and $A^{-} \subseteq E^-$. For every edge $\tilde{e}=(u,v)$ not in the active set, i.e. $\tilde{e} \in E\setminus A^*$, it exists a path $\pi$ from $u$ to $v$ such that:
+\subsection{Properties of the MWS active set}
+
+Some trivial properties of the active set $A$ and the cut defined by the MWS algorithm:
 \begin{enumerate}
-\item the path is included in the active set: $\pi \subseteq A^*$,  \label{cond_1} 
-\item the path includes exactly zero or one repulsive edges: $\left| \pi \cap E^{-}  \right| \leq 1$, \label{cond_2}
+\item The set $A^{+}$ is a spanning forest on $\mathcal{G}$ and defines a graph cut $S$ and a vertex labeling $\mathcal{L}$.
+\item Some trivial properties of the active set:
+\begin{equation}
+\forall e_{uv}\in A \,\mathrm{s.t.}\, \mathcal{L}(u)=\mathcal{L}(v) \quad \Longrightarrow \quad e_{u,v} \in E^+
+\end{equation}
+\begin{equation}
+\forall e_{uv} \in A \,\mathrm{s.t.}\, \mathcal{L}(u)\neq\mathcal{L}(v) \quad \Longrightarrow \quad e_{u,v} \in E^-
+\end{equation}
+\item The repulsive active set $A^{-}$ is simply given by all the repulsive edges on the final cut: ${A^{-} = S \cap E^{-}}$. %(it follows from the algorithm definition \TODO{or the energy..?}).
+\item From the properties of the spanning forest $A^+$, it directly follow that for every pair of vertices $u,v\in V$ in the same connected component, it exists only one path included in $A^+$:
+\begin{equation}
+\forall u,v \in V\,\, \mathrm{s.t.} \, \mathcal{L}(u)=\mathcal{L}(v)  \Longrightarrow \exists ! \, \mathrm{path} \, \pi_{u \rightarrow v}\subseteq A^+
+\end{equation}
+\end{enumerate}
+
+
+\begin{prop} \label{prop:A_connected}
+If we assume that the graph $\mathcal{G}$ is connected, then the final active set $A$ defines a connected subgraph of $\mathcal{G}$, i.e. $u \underset{(V,A)}{\sim}v$ for every pair of vertices $u,v \in \mathcal{G}$. 
+\end{prop}
+\begin{proof}
+%Since $\mathcal{G}$ is connected, we note that $\forall u,v\in V \,\mathrm{s.t.}\, \mathcal{L}(u)=\mathcal{L}(v)$, then $u \underset{\mathcal{G}}{\sim}v$.
+To prove this proposition, it is enough to show that every segment of the cut $S$ includes at least one edge in the active set $A^- \subseteq E^-$. 
+%(every connected component defined by the spanning forest $A^+$ is connected by some repulsive edges). By contradiction, let us assume that:
+\begin{equation}
+\exists \, \tilde{e} \in S \,\, \mathrm{s.t.} \, S^{(\tilde{e})}\cap E^- = \emptyset.
+\end{equation}
+Thus, $\tilde{e}\in E^+$ and we could add it to the active set $A^+$ without violating any loop-constraints. In this way we would find a new feasible solution $A \cup \{\tilde{e}\}$ with an higher energy than the optimal solution $A$, which is a contradiction. \TODO{rewrite}
+\end{proof}
+
+
+\subsection{Path inequalities}
+\begin{theorem}
+If we run the MWS algorithm until termination, we get a final active set ${A = A^{+} \cup A^{-}}$, where $A^{+} \subseteq E^+$ and $A^{-} \subseteq E^-$. For every edge $\tilde{e}=(u,v)$ not in the active set, i.e. $\tilde{e} \in E\setminus A^*$, it exists a path $\pi_{u \rightarrow v}$ from $u$ to $v$ such that:
+\begin{enumerate}
+\item the path is included in the active set: $\pi_{u \rightarrow v} \subseteq A^*$,  \label{cond_1} 
+\item the path includes exactly zero or one repulsive edges: $\left| \pi_{u \rightarrow v} \cap E^{-}  \right| \leq 1$, \label{cond_2}
 \item the weight of the weakest edge along the path is higher than the weights of $\tilde{e}$: \label{cond_3}
 \[ 
-w(\tilde{e}) < \min_{p\in \pi}  (w(p)).
+w(\tilde{e}) < \min_{p\in \pi_{u \rightarrow v}}  (w(p)).
 \]
 \end{enumerate} 
 \end{theorem}
 \begin{proof}
+Depending on the type of edge $\tilde{e}_{u,v}$, we consider three different cases and we show that the theorem holds for all of them. \TODO{Why only three...?}\\
+
+\noindent \textbf{Case 1: Attractive edge $\tilde{e}_{u,v}$ NOT on final cut} 
+From Property (4...?) of the spanning forest $A^+$, it follows the existence of a unique positive path $\pi_{u \rightarrow v}\subseteq A^+$ on the forest $A^+$. \\
+We now prove by contradiction that $\pi_{u \rightarrow v}$ fulfills condition \hyperref[cond_3]{3}. Let us assume that $\exists \, p\in \pi_{u \rightarrow v}$ such that $w(p)< w(e)$ and we then construct an alternative active set $A'= A \cup \{\tilde{e}\} \setminus \{p\}$. We then note that $A'$ does not violate any path-constraints and that $T(A')>T(A)$, which is a contradiction.\\
 
 
+\noindent \textbf{Case 2: Attractive edge $\tilde{e}_{u,v}$ on final cut}  
+In this case $\tilde{e}_{u,v} \in E^+ \cap S^* $ and $\mathcal{L}(u)\neq\mathcal{L}(v)$. Let us define the set $\Pi_{u \rightarrow v}^-$ of all paths connecting $u$ and $v$ that are included in $A$ and includes exactly one repulsive edge: 
+\begin{equation}
+\Pi_{u \rightarrow v}^- \equiv \left\{ \mathrm{path} \,\, \pi_{u \rightarrow v}  : \pi_{u \rightarrow v} \subseteq A, \, \left| \pi_{u \rightarrow v} \cap E^{-}  \right| \leq 1 \right \}.
+\end{equation}  
+Since $\mathcal{G}$ is connected, from \autoref{prop:A_connected} it follows that $\Pi_{u \rightarrow v}^- \neq \emptyset$.
 
-Let us define:
-\begin{itemize}
-\item The set $A^{+}$ is a spanning forest on $\mathcal{G}$ and defines a graph cut $S$ and a vertex labeling $\mathcal{L}$.
-\end{itemize}
-
-Some properties of the active set and the final cut:
-\begin{itemize}
-    \item We note that the repulsive active set $A^{-}$ is simply given by all the repulsive edges on the final cut: $A^{-} = S \cap E^{-}$ (it follows from the algorithm definition).
-\end{itemize}
-
-\begin{theorem}
-Prova
-\end{theorem}
-\begin{proof}
-Ciao
-\end{proof}
-
-
-\TODO{I could also use $\underset{(V,A^{*})}{u\thicksim v}$}
-
-Depending on the type of edge $\tilde{e}$, we consider three different cases and we show that the theorem holds for all of them.
-
-\noindent \textbf{Case 1: Attractive edge not in the active set and NOT on final cut} 
-
-$\tilde{e} \in E^+ \setminus S^* $
-
- $A^* \cap E^+$ defines a spanning forest on $(V,E)$ associated to the cut $S^*$. Thus, the existence of a path $\pi \subseteq A^* \cap E^+$ from $u$ to $v$ directly follows from $\tilde{e} \notin S^* $ (see Fig. \ref{fig:proof_case_1}). Particularly, there is only one path fulfilling conditions \hyperref[cond_1]{1} and \hyperref[cond_2]{2}.  
-
-\noindent \textbf{Case 2: Attractive edge not in the active set and on final cut}  
-
-$\tilde{e} \in E^+ \cap S^* $
 
 
 \noindent \textbf{Case 3: Repulsive edge not in the active set} 
