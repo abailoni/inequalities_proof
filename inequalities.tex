@@ -79,14 +79,17 @@
 % \item $t=1$: this case is trivial because there are no contraints and the MWS algorithm always add the first edge (here $A_{0} = \emptyset$). Thus $A_{1} = \left\{ e_{1} \right\} \subseteq A^{*}$
 % \item Let us assume that $A_{t-1}\subseteq A^*$ and we want to prove $A_{t}\subseteq A^*$
 % \end{itemize}
-\section{Some definitions}
-
+\section{Intro}
+\subsection{Some definitions}
 \begin{definition}
-The vertex labeling $\mathcal{L}$ of $\mathcal{G}$ is defined as a map $\mathcal{L}: V \rightarrow L $, where $L$ is an arbitrary set of labels;
+The vertex labeling $\mathcal{L}$ of $\mathcal{G}$ is defined as a map $\mathcal{L}: V \rightarrow L $, where $L$ is an arbitrary set of labels.
 \end{definition}
 
 \begin{definition}
-The \emph{boundary} $\partial \mathcal{L}$ of a vertex labeling $\mathcal{L}$ is defined as the edge set $\partial \mathcal{L} = \left\{ e_{u,v}\in E | \mathcal{L}(u) \neq \mathcal{L}(v)\right\}$
+The \emph{boundary} $\partial \mathcal{L}$ of a vertex labeling $\mathcal{L}$ is defined as the edge set 
+$$
+\partial \mathcal{L} = \left\{ e_{uv}\in E | \mathcal{L}(u) \neq \mathcal{L}(v)\right\}
+$$
 \end{definition}
 
 \begin{theorem}
@@ -99,25 +102,29 @@ Let $S$ be a cut on $G$, let $e\in S$,  and let $G^{'}=(V,E\setminus(S\setminus 
 S^{(e)} = \left\{ e_{u,v} \big| e_{u,v} \in S, u \underset{G'}{\sim}v   \right\}.
 \end{equation}
 \end{definition}
+\TODO{Missing definition of energy $T$, MWS objective, algorithm, etc...}
 
 
-\section{Path inequalities}
 \subsection{Properties of the MWS active set}
 
-Some trivial properties of the active set $A$ and the cut defined by the MWS algorithm:
+Some properties of the final active set $A$ defined by the MWS algorithm:
 \begin{enumerate}
 \item The set $A^{+}$ is a spanning forest on $\mathcal{G}$ and defines a graph cut $S$ and a vertex labeling $\mathcal{L}$.
-\item Some trivial properties of the active set:
+\item Every edge of the active set \textbf{not on} the final cut $S$ is attractive:
 \begin{equation}
-\forall e_{uv}\in A \,\mathrm{s.t.}\, \mathcal{L}(u)=\mathcal{L}(v) \quad \Longrightarrow \quad e_{u,v} \in E^+
+\forall e_{uv}\in A \quad \mathrm{s.t.}\, \mathcal{L}(u)=\mathcal{L}(v) \quad \Longrightarrow \quad e_{uv} \in E^+
 \end{equation}
+\item Every edge of the active set \textbf{on} the final cut $S$ is repulsive:
 \begin{equation}
-\forall e_{uv} \in A \,\mathrm{s.t.}\, \mathcal{L}(u)\neq\mathcal{L}(v) \quad \Longrightarrow \quad e_{u,v} \in E^-
+\forall e_{uv} \in A \quad \mathrm{s.t.}\, \mathcal{L}(u)\neq\mathcal{L}(v) \quad \Longrightarrow \quad e_{uv} \in E^-
 \end{equation}
-\item The repulsive active set $A^{-}$ is simply given by all the repulsive edges on the final cut: ${A^{-} = S \cap E^{-}}$. %(it follows from the algorithm definition \TODO{or the energy..?}).
-\item From the properties of the spanning forest $A^+$, it directly follow that for every pair of vertices $u,v\in V$ in the same connected component, it exists only one path included in $A^+$:
+
+
+
+\item All repulsive edges on the final cut belong to the active set: ${A^{-} = S \cap E^{-}}$. %(it follows from the algorithm definition \TODO{or the energy..?}).
+\item From the properties of the spanning forest $A^+$, it follows that for every pair of vertices $u,v\in V$ in the same connected component, it exists only one path included in $A^+$:
 \begin{equation}
-\forall u,v \in V\,\, \mathrm{s.t.} \, \mathcal{L}(u)=\mathcal{L}(v)  \Longrightarrow \exists ! \, \mathrm{path} \, \pi_{u \rightarrow v}\subseteq A^+
+\forall u,v \in V\quad \mathrm{s.t.} \, \mathcal{L}(u)=\mathcal{L}(v)\quad  \Longrightarrow \quad\exists ! \, \mathrm{path} \, \pi_{u \rightarrow v}\subseteq A^+
 \end{equation}
 \end{enumerate}
 
@@ -128,53 +135,64 @@ If we assume that the graph $\mathcal{G}$ is connected, then the final active se
 \begin{proof}
 %Since $\mathcal{G}$ is connected, we note that $\forall u,v\in V \,\mathrm{s.t.}\, \mathcal{L}(u)=\mathcal{L}(v)$, then $u \underset{\mathcal{G}}{\sim}v$.
 To prove this proposition, it is enough to show that every segment of the cut $S$ includes at least one edge in the active set $A^- \subseteq E^-$. 
-%(every connected component defined by the spanning forest $A^+$ is connected by some repulsive edges). By contradiction, let us assume that:
+%(every connected component defined by the spanning forest $A^+$ is connected by some repulsive edges). 
+By contradiction, let us assume that:
 \begin{equation}
 \exists \, \tilde{e} \in S \,\, \mathrm{s.t.} \, S^{(\tilde{e})}\cap E^- = \emptyset.
 \end{equation}
-Thus, $\tilde{e}\in E^+$ and we could add it to the active set $A^+$ without violating any loop-constraints. In this way we would find a new feasible solution $A \cup \{\tilde{e}\}$ with an higher energy than the optimal solution $A$, which is a contradiction. \TODO{rewrite}
+Thus, the edge $\tilde{e}$ has to be attractive and we can construct an new feasible active set $A'= A \cup \{\tilde{e}\}$ not violating any path-constraints. We then note that $T(A')>T(A)$, which is a contradiction. 
+
+\TODO{Add more details...}
+%and we could add it to the active set $A^+$ without violating any loop-constraints. In this way we would find a new feasible solution $A \cup \{\tilde{e}\}$ with an higher energy than the optimal solution $A$, which is a contradiction. 
 \end{proof}
 
 
-\subsection{Path inequalities}
+\section{Path inequalities}
 \begin{theorem}
-If we run the MWS algorithm until termination, we get a final active set ${A = A^{+} \cup A^{-}}$, where $A^{+} \subseteq E^+$ and $A^{-} \subseteq E^-$. For every edge $\tilde{e}=(u,v)$ not in the active set, i.e. $\tilde{e} \in E\setminus A^*$, it exists a path $\pi_{u \rightarrow v}$ from $u$ to $v$ such that:
+If we run the MWS algorithm until termination, we get a final active set ${A = A^{+} \cup A^{-}}$, where $A^{+} \subseteq E^+$ and $A^{-} \subseteq E^-$. For every edge $\tilde{e}_{uv}$ not in the active set, i.e. $\tilde{e}_{uv} \in E\setminus A$, it exists a path $\pi_{u \rightarrow v}$ from $u$ to $v$ such that:
 \begin{enumerate}
-\item the path is included in the active set: $\pi_{u \rightarrow v} \subseteq A^*$,  \label{cond_1} 
+\item the path is included in the active set: $\pi_{u \rightarrow v} \subseteq A$,  \label{cond_1} 
 \item the path includes exactly zero or one repulsive edges: $\left| \pi_{u \rightarrow v} \cap E^{-}  \right| \leq 1$, \label{cond_2}
 \item the weight of the weakest edge along the path is higher than the weights of $\tilde{e}$: \label{cond_3}
 \[ 
-w(\tilde{e}) < \min_{p\in \pi_{u \rightarrow v}}  (w(p)).
+w(\tilde{e}_{uv}) < \min_{p\in \pi_{u \rightarrow v}}  (w(p)).
 \]
 \end{enumerate} 
 \end{theorem}
 \begin{proof}
-Depending on the type of edge $\tilde{e}_{u,v}$, we consider three different cases and we show that the theorem holds for all of them. \TODO{Why only three...?}\\
+We prove the theorem by showing that it holds for every edge $\tilde{e}_{uv}$ not belonging to the active set $A$. \\
 
-\noindent \textbf{Case 1: Attractive edge $\tilde{e}_{u,v}$ NOT on final cut} 
-From Property (4...?) of the spanning forest $A^+$, it follows the existence of a unique positive path $\pi_{u \rightarrow v}\subseteq A^+$ on the forest $A^+$. \\
-We now prove by contradiction that $\pi_{u \rightarrow v}$ fulfills condition \hyperref[cond_3]{3}. Let us assume that $\exists \, p\in \pi_{u \rightarrow v}$ such that $w(p)< w(e)$ and we then construct an alternative active set $A'= A \cup \{\tilde{e}\} \setminus \{p\}$. We then note that $A'$ does not violate any path-constraints and that $T(A')>T(A)$, which is a contradiction.\\
+\noindent \textbf{Case 1: $\tilde{e}_{uv}$ is an edge not on the final cut $S$} 
+In this case $\tilde{e}_{uv} \in S$ and $\mathcal{L}(u) = \mathcal{L}(v)$ (see Fig. \ref{fig:proof_case_1}).
+Property (4...?) of the spanning forest $A^+$ proves the existence of a unique positive path ${\pi_{u \rightarrow v}\subseteq A^+}$. \\
+We now prove by contradiction that $\pi_{u \rightarrow v}$ fulfills condition \hyperref[cond_3]{3}. Let us assume that $\exists \, p\in \pi_{u \rightarrow v}$ such that $w(p)< w(\tilde{e}_{uv})$ and we then construct an new feasible active set $A'= A \cup \{\tilde{e}_{uv}\} \setminus \{p\}$ not violating any path-constraints. We then note that $T(A')>T(A)$, which is a contradiction. 
+
+\TODO{Explain better this last part}\\
 
 
-\noindent \textbf{Case 2: Attractive edge $\tilde{e}_{u,v}$ on final cut}  
-In this case $\tilde{e}_{u,v} \in E^+ \cap S^* $ and $\mathcal{L}(u)\neq\mathcal{L}(v)$. Let us define the set $\Pi_{u \rightarrow v}^-$ of all paths connecting $u$ and $v$ that are included in $A$ and includes exactly one repulsive edge: 
-\begin{equation}
+\noindent \textbf{Case 2: $\tilde{e}_{uv}$ is an edge on the final cut $S$}  
+In this case $\tilde{e}_{uv} \in S $ and $\mathcal{L}(u)\neq\mathcal{L}(v)$ (see Fig. \ref{fig:proof_case_2}).
+From Property (3...?) of the active set, we know that all repulsive edges on the final cut belong to the active set. Thus, in this case $\tilde{e}_{uv}$ has to be an attractive edge.\\ 
+Let us define the set $\Pi_{u \rightarrow v}^-$ of all paths connecting $u$ and $v$ that are included in $A$ and includes exactly one repulsive edge: 
+\begin{equation}\label{eq:set_of_paths_in_A}
 \Pi_{u \rightarrow v}^- \equiv \left\{ \mathrm{path} \,\, \pi_{u \rightarrow v}  : \pi_{u \rightarrow v} \subseteq A, \, \left| \pi_{u \rightarrow v} \cap E^{-}  \right| \leq 1 \right \}.
 \end{equation}  
-Since $\mathcal{G}$ is connected, from \autoref{prop:A_connected} it follows that $\Pi_{u \rightarrow v}^- \neq \emptyset$.
-
-
-
-\noindent \textbf{Case 3: Repulsive edge not in the active set} 
-
-$\tilde{e} \in E^-$
-
-
-First, we note that the only repulsive edges in the active set $A^*$ are those on the cut $S^*$:
+The edge $\tilde{e}_{uv}$ connects two neighboring connected components of the spanning forest $A^+$. Since $\mathcal{G}$ is connected, from \autoref{prop:A_connected} it follows that $\Pi_{u \rightarrow v}^- \neq \emptyset$. Let us now define the weakest edge $\bar{p}(\pi)$ of a path $\pi$:
 \begin{equation}
-E^- \cap S^* = E^- \cap A^*.
+\bar{p}(\pi) \equiv \argmin_{p\in \pi}  (w(p))
 \end{equation}
- Thus, in this third case $\tilde{e} \notin S^*$ and all paths $\pi$ \TODO{introduce a new notation..?} fulfilling conditions \hyperref[cond_1]{1} and \hyperref[cond_2]{2} do not include any repulsive edge (see Fig. \ref{fig:proof_case_3}). 
+and the set of the weakest edges of all paths defined in (\ref{eq:set_of_paths_in_A}) connecting $u$ and $v$:
+\begin{equation}
+\bar{P}_{u \rightarrow v} = \left\{ \bar{p}(\pi) \, \big| \,\pi \in \Pi_{u \rightarrow v}^- \right\}.
+\end{equation}
+We now want to prove that it exists at least one path in $\Pi_{u \rightarrow v}^-$ fulfilling condition \hyperref[cond_3]{3}. By contradiction let us assume the opposite and that edge $\tilde{e}_{uv}$ is stronger than all other paths in $\Pi_{u \rightarrow v}^-$ connecting $u$ and $v$:
+\begin{equation}
+w(\tilde{e}_{uv}) > w(p), \quad \quad \forall p \in \bar{P}_{u \rightarrow v}.
+\end{equation}
+In this case we can then construct an new feasible active set $A'= A \cup \{\tilde{e}_{uv}\} \setminus \bar{P}_{u \rightarrow v}$ not violating any path-constraints. We then note that $T(A')>T(A)$, which is a contradiction.  
+
+\TODO{Explain better this last part}\\
+
 \end{proof}
 
 
