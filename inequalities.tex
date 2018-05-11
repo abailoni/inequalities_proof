@@ -112,47 +112,61 @@ Some properties of the final active set $A$ defined by the MWS algorithm:
 \item The set $A^{+}$ is a spanning forest on $\mathcal{G}$ and defines a graph cut $S$ and a vertex labeling $\mathcal{L}$.
 \item Every edge of the active set \textbf{not on} the final cut $S$ is attractive:
 \begin{equation}
-\forall e_{uv}\in A \quad \mathrm{s.t.}\, \mathcal{L}(u)=\mathcal{L}(v) \quad \Longrightarrow \quad e_{uv} \in E^+
+\forall e_{uv}\in A \quad \mathrm{s.th.}\quad \mathcal{L}(u)=\mathcal{L}(v) \quad \Longrightarrow \quad e_{uv} \in E^+
 \end{equation}
 \item Every edge of the active set \textbf{on} the final cut $S$ is repulsive:
 \begin{equation}
-\forall e_{uv} \in A \quad \mathrm{s.t.}\, \mathcal{L}(u)\neq\mathcal{L}(v) \quad \Longrightarrow \quad e_{uv} \in E^-
+\forall e_{uv} \in A \quad \mathrm{s.th.}\quad \mathcal{L}(u)\neq\mathcal{L}(v) \quad \Longrightarrow \quad e_{uv} \in E^-
 \end{equation}
 
 
 
 \item All repulsive edges on the final cut belong to the active set: ${A^{-} = S \cap E^{-}}$. %(it follows from the algorithm definition \TODO{or the energy..?}).
-\item From the properties of the spanning forest $A^+$, it follows that for every pair of vertices $u,v\in V$ in the same connected component, it exists only one path included in $A^+$:
+\item From the properties of the spanning forest $A^+$, it follows that for every pair of vertices $u,v\in V$ in the same connected component, it exists only one path connecting them that is included in $A^+$:
 \begin{equation}
-\forall u,v \in V\quad \mathrm{s.t.} \, \mathcal{L}(u)=\mathcal{L}(v)\quad  \Longrightarrow \quad\exists ! \, \mathrm{path} \, \pi_{u \rightarrow v}\subseteq A^+
+\forall u,v \in V\quad \mathrm{s.th.} \, \mathcal{L}(u)=\mathcal{L}(v)\quad  \Longrightarrow \quad\exists ! \, \mathrm{path} \, \pi_{u \rightarrow v}\subseteq A^+
 \end{equation}
+
+\item Let us assume to have a cycle $c$ from the set $C_{0/1}(A)$, given some set $A$. Then if we consider the vertex labeling $\mathcal{L}$ associated to the spanning forest $A\cap E^+$, we have that every vertex connected by the cycle is in the same connected component:
+
+\begin{equation}
+\forall e_{uv} \in c \quad \Rightarrow \quad \mathcal{L}(u) = \mathcal{L}(v) 
+\end{equation}
+
+\item Even better property: Let us consider an active set $A$ such that $C_{0/1}(A) =  \emptyset$ and two vertices $u,v$ not connected by the set $A$: such that $u \underset{(V,A)}{\not\sim}v$. Then we can always add an edge $e = (u,v)$ to the set $A$ without violating any constraint: $C_{0/1}(A \cup \{e\}) =  \emptyset$.
 \end{enumerate}
 
 
 \begin{prop} \label{prop:A_connected}
-If we assume that the graph $\mathcal{G}$ is connected, then the final active set $A$ defines a connected subgraph of $\mathcal{G}$, i.e. $u \underset{(V,A)}{\sim}v$ for every pair of vertices $u,v \in \mathcal{G}$. 
+If we assume that the graph $\mathcal{G}$ is connected, then the final active set $A$ defines a connected subgraph of $\mathcal{G}$, i.e. $u \underset{(V,A)}{\sim}v$ for every pair of vertices $u,v \in V$. 
 \end{prop}
 \begin{proof}
 %Since $\mathcal{G}$ is connected, we note that $\forall u,v\in V \,\mathrm{s.t.}\, \mathcal{L}(u)=\mathcal{L}(v)$, then $u \underset{\mathcal{G}}{\sim}v$.
+Let us introduce the cut $S$ defined by the connected components of the spanning forest  $A^{*} \cap E^+$. To prove the theorem, we need to show that every boundary of the cut $S$ includes at least one edge of $A^*$:
+\begin{equation}
+\forall \tilde{e} \in S \quad \Longrightarrow \quad S^{(\tilde{e})}\cap A^* \neq \emptyset.
+\end{equation}
+
 To prove this proposition, it is enough to show that every segment of the cut $S$ includes at least one edge in the active set $A^- \subseteq E^-$. 
 %(every connected component defined by the spanning forest $A^+$ is connected by some repulsive edges). 
 By contradiction, let us assume that:
 \begin{equation}
-\exists \, \tilde{e} \in S \,\, \mathrm{s.t.} \, S^{(\tilde{e})}\cap E^- = \emptyset.
+\exists \, \tilde{e} \in S \quad \mathrm{s.th.} \quad S^{(\tilde{e})}\cap E^- = \emptyset.
 \end{equation}
-Thus, the edge $\tilde{e}$ has to be attractive and we can construct an new feasible active set $A'= A \cup \{\tilde{e}\}$ not violating any path-constraints. We then note that $T(A')>T(A)$, which is a contradiction. 
+Thus, the edge $\tilde{e}$ has to be attractive and we can construct an new feasible active set $A'= A \cup \{\tilde{e}\}$ not violating any path-constraints. \TODO{Explain better} We then note that $T(A')>T(A)$, which is a contradiction. 
 
-\TODO{Add more details...}
 %and we could add it to the active set $A^+$ without violating any loop-constraints. In this way we would find a new feasible solution $A \cup \{\tilde{e}\}$ with an higher energy than the optimal solution $A$, which is a contradiction. 
 \end{proof}
 
 
 \section{Path inequalities}
 \begin{theorem}
-If we run the MWS algorithm until termination, we get a final active set ${A = A^{+} \cup A^{-}}$, where $A^{+} \subseteq E^+$ and $A^{-} \subseteq E^-$. For every edge $\tilde{e}_{uv}$ not in the active set, i.e. $\tilde{e}_{uv} \in E\setminus A$, it exists a path $\pi_{u \rightarrow v}$ from $u$ to $v$ such that:
+If we run the MWS algorithm until termination, we get a final active set ${A = A^{+} \cup A^{-}}$, where $A^{+} \subseteq E^+$ and $A^{-} \subseteq E^-$. For every edge $\tilde{e}_{uv}$ not in the active set %, i.e. $\tilde{e}_{uv} \in E\setminus A$, 
+it exists a path $\pi_{u \rightarrow v}$ from $u$ to $v$ such that:
 \begin{enumerate}
 \item the path is included in the active set: $\pi_{u \rightarrow v} \subseteq A$,  \label{cond_1} 
-\item the path includes exactly zero or one repulsive edges: $\left| \pi_{u \rightarrow v} \cap E^{-}  \right| \leq 1$, \label{cond_2}
+\item the path includes exactly zero or one repulsive edges: $\left| \pi_{u \rightarrow v} \cap E^{-}  \right| \leq 1$, \\
+ \label{cond_2} 
 \item the weight of the weakest edge along the path is higher than the weights of $\tilde{e}$: \label{cond_3}
 \[ 
 w(\tilde{e}_{uv}) < \min_{p\in \pi_{u \rightarrow v}}  (w(p)).
