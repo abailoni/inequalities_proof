@@ -159,54 +159,77 @@ Thus, the edge $\tilde{e}$ has to be attractive and we can construct an new feas
 \end{proof}
 
 
-\section{Path inequalities}
+\section{Reduced path inequalities}
 \begin{theorem}
-If we run the MWS algorithm until termination, we get a final active set ${A = A^{+} \cup A^{-}}$, where $A^{+} \subseteq E^+$ and $A^{-} \subseteq E^-$. For every edge $\tilde{e}_{uv}$ not in the active set %, i.e. $\tilde{e}_{uv} \in E\setminus A$, 
-it exists a path $\pi_{u \rightarrow v}$ from $u$ to $v$ such that:
-\begin{enumerate}
-\item the path is included in the active set: $\pi_{u \rightarrow v} \subseteq A$,  \label{cond_1} 
-\item the path includes exactly zero or one repulsive edges: $\left| \pi_{u \rightarrow v} \cap E^{-}  \right| \leq 1$, \\
- \label{cond_2} 
-\item the weight of the weakest edge along the path is higher than the weights of $\tilde{e}$: \label{cond_3}
-\[ 
-w(\tilde{e}_{uv}) < \min_{p\in \pi_{u \rightarrow v}}  (w(p)).
-\]
-\end{enumerate} 
+Let us consider the optimal active set $A^*$ found by the MWS algorithm on a graph $\mathcal{G} = (V, E^+ \cup E^-)$. Then, for every edge $\tilde{e}_{uv} \in E\setminus A^*$ not in the optimal active set, 
+it exists a path $\pi_{u \rightarrow v}  \subseteq A^* $ from $u$ to $v$ such that the weight of its weakest edge is higher than the weight of $\tilde{e}_{uv}$:
+% \begin{enumerate}
+% \item the path is : $\pi_{u \rightarrow v}$,  \label{cond_1} 
+% % \item the path includes exactly zero or one repulsive edges: $\left| \pi_{u \rightarrow v} \cap E^{-}  \right| \leq 1$, \label{cond_2} 
+% \item the weight of the weakest edge along the path is higher than the weights of $\tilde{e}$: \label{cond_3}
+\begin{equation}
+\forall \tilde{e}_{uv} \in E\setminus A^*, \quad \exists \,\mathrm{path}\, \pi_{u \rightarrow v}  \subseteq A^* \quad \mathrm{s.th.} \quad w(\tilde{e}_{uv}) < \min_{p\in \pi_{u \rightarrow v}}  w(p). \label{eq:reduced_path_ineq}
+\end{equation} 
+
+% \end{enumerate} 
 \end{theorem}
 \begin{proof}
-We prove the theorem by showing that it holds for every edge $\tilde{e}_{uv}$ not belonging to the active set $A$. \\
-
-\noindent \textbf{Case 1: $\tilde{e}_{uv}$ is an edge not on the final cut $S$} 
-In this case $\tilde{e}_{uv} \in S$ and $\mathcal{L}(u) = \mathcal{L}(v)$ (see Fig. \ref{fig:proof_case_1}).
-Property (4...?) of the spanning forest $A^+$ proves the existence of a unique positive path ${\pi_{u \rightarrow v}\subseteq A^+}$. \\
-We now prove by contradiction that $\pi_{u \rightarrow v}$ fulfills condition \hyperref[cond_3]{3}. Let us assume that $\exists \, p\in \pi_{u \rightarrow v}$ such that $w(p)< w(\tilde{e}_{uv})$ and we then construct an new feasible active set $A'= A \cup \{\tilde{e}_{uv}\} \setminus \{p\}$ not violating any path-constraints. We then note that $T(A')>T(A)$, which is a contradiction. 
-
-\TODO{Explain better this last part}\\
-
-
-\noindent \textbf{Case 2: $\tilde{e}_{uv}$ is an edge on the final cut $S$}  
-In this case $\tilde{e}_{uv} \in S $ and $\mathcal{L}(u)\neq\mathcal{L}(v)$ (see Fig. \ref{fig:proof_case_2}).
-From Property (3...?) of the active set, we know that all repulsive edges on the final cut belong to the active set. Thus, in this case $\tilde{e}_{uv}$ has to be an attractive edge.\\ 
-Let us define the set $\Pi_{u \rightarrow v}^-$ of all paths connecting $u$ and $v$ that are included in $A$ and includes exactly one repulsive edge: 
-\begin{equation}\label{eq:set_of_paths_in_A}
-\Pi_{u \rightarrow v}^- \equiv \left\{ \mathrm{path} \,\, \pi_{u \rightarrow v}  : \pi_{u \rightarrow v} \subseteq A, \, \left| \pi_{u \rightarrow v} \cap E^{-}  \right| \leq 1 \right \}.
-\end{equation}  
-The edge $\tilde{e}_{uv}$ connects two neighboring connected components of the spanning forest $A^+$. Since $\mathcal{G}$ is connected, from \autoref{prop:A_connected} it follows that $\Pi_{u \rightarrow v}^- \neq \emptyset$. Let us now define the weakest edge $\bar{p}(\pi)$ of a path $\pi$:
+Since the active set $A^*$ is optimal, it follows that the new active set $A' = A^* \cup \{ \tilde{e}_{uv}\}$ has to violate some cycle constraints:
 \begin{equation}
-\bar{p}(\pi) \equiv \argmin_{p\in \pi}  (w(p))
+C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\}) \neq \emptyset.
 \end{equation}
-and the set of the weakest edges of all paths defined in (\ref{eq:set_of_paths_in_A}) connecting $u$ and $v$:
-\begin{equation}
-\bar{P}_{u \rightarrow v} = \left\{ \bar{p}(\pi) \, \big| \,\pi \in \Pi_{u \rightarrow v}^- \right\}.
-\end{equation}
-We now want to prove that it exists at least one path in $\Pi_{u \rightarrow v}^-$ fulfilling condition \hyperref[cond_3]{3}. By contradiction let us assume the opposite and that edge $\tilde{e}_{uv}$ is stronger than all other paths in $\Pi_{u \rightarrow v}^-$ connecting $u$ and $v$:
-\begin{equation}
-w(\tilde{e}_{uv}) > w(p), \quad \quad \forall p \in \bar{P}_{u \rightarrow v}.
-\end{equation}
-In this case we can then construct an new feasible active set $A'= A \cup \{\tilde{e}_{uv}\} \setminus \bar{P}_{u \rightarrow v}$ not violating any path-constraints. We then note that $T(A')>T(A)$, which is a contradiction.  
+This shows that %$(V, A^*)$ is a connected subgraph of $\mathcal{G}$ and 
+it always exists one path in the active set $A^*$ connecting the vertices $u$ and $v$.
 
-\TODO{Explain better this last part}\\
+We will now prove that there is at least one of these paths fulfilling the property in Eq. \ref{eq:reduced_path_ineq}. To do so, let us define the set of weakest edges along each of the violating cycles in $C_{0/1}(A')$:
 
+\begin{equation}
+\mathcal{W} \equiv \left\{ e \in E \quad \Big| \quad\exists \, c\in C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\}) \quad \mathrm{s.th.} \quad e = \argmin_{p\in c} w(p) \right\}.
+\end{equation}
+In order to prove the theorem, we need to show that $\tilde{e}_{uv} \in \mathcal{W}$, i.e. $\tilde{e}_{uv}$ is the weakest edge of at least one violating cycle. In this case, this violating cycle defines one path $\pi_{u \rightarrow v}$ in the active set $A^*$ connecting $u$ and $v$ fulfilling property \ref{eq:reduced_path_ineq}:
+\begin{equation}
+w(\tilde{e}_{uv}) < \min_{p\in \pi_{u \rightarrow v}}  w(p).
+\end{equation}
+
+We prove now by contradiction that $\tilde{e}_{uv} \in \mathcal{W}$. If we assume the opposite, i.e. $\tilde{e}_{uv} \notin \mathcal{W}$, it follows that:
+\begin{equation}
+w(\tilde{e}_{uv}) > w(e), \quad \quad \forall \,e\in \mathcal{W} \label{eq:ineq_weakest_edges}
+\end{equation}
+and from the properties of the energy function $T$ it follows that:
+\begin{equation}
+T(\{\tilde{e}_{uv}\}) = 2^{w(\tilde{e}_{uv})} \overset{(\ref{eq:ineq_weakest_edges})}{>} \sum_{e \in \mathcal{W}} 2^{w(e)} = T( \mathcal{W} ) \label{eq:strict_energy_ineq}
+\end{equation}
+If we now construct a new active set $A^{''}=A^*\cup\{\tilde{e}_{uv}\} \setminus \mathcal{W}$, we note that it does not violate any cycle constraint and it has a higher energy than the optimal active set $A^*$:
+\begin{equation}
+T(A'') = T(A^*) + T(\{\tilde{e}_{uv}\}) - T( \mathcal{W} ) \overset{(\ref{eq:strict_energy_ineq})}{>}T(A^*).
+\end{equation}
+We have then a contradiction.
+% We prove the theorem by showing that it holds for every edge $\tilde{e}_{uv}$ not belonging to the active set $A$. \\
+% \noindent \textbf{Case 1: $\tilde{e}_{uv}$ is an edge not on the final cut $S$} 
+% In this case $\tilde{e}_{uv} \in S$ and $\mathcal{L}(u) = \mathcal{L}(v)$ (see Fig. \ref{fig:proof_case_1}).
+% Property (4...?) of the spanning forest $A^+$ proves the existence of a unique positive path ${\pi_{u \rightarrow v}\subseteq A^+}$. \\
+% We now prove by contradiction that $\pi_{u \rightarrow v}$ fulfills condition \hyperref[cond_3]{3}. Let us assume that $\exists \, p\in \pi_{u \rightarrow v}$ such that $w(p)< w(\tilde{e}_{uv})$ and we then construct an new feasible active set $A'= A \cup \{\tilde{e}_{uv}\} \setminus \{p\}$ not violating any path-constraints. We then note that $T(A')>T(A)$, which is a contradiction. 
+% \TODO{Explain better this last part}\\
+% \noindent \textbf{Case 2: $\tilde{e}_{uv}$ is an edge on the final cut $S$}  
+% In this case $\tilde{e}_{uv} \in S $ and $\mathcal{L}(u)\neq\mathcal{L}(v)$ (see Fig. \ref{fig:proof_case_2}).
+% From Property (3...?) of the active set, we know that all repulsive edges on the final cut belong to the active set. Thus, in this case $\tilde{e}_{uv}$ has to be an attractive edge.\\ 
+% Let us define the set $\Pi_{u \rightarrow v}^-$ of all paths connecting $u$ and $v$ that are included in $A$ and includes exactly one repulsive edge: 
+% \begin{equation}\label{eq:set_of_paths_in_A}
+% \Pi_{u \rightarrow v}^- \equiv \left\{ \mathrm{path} \,\, \pi_{u \rightarrow v}  : \pi_{u \rightarrow v} \subseteq A, \, \left| \pi_{u \rightarrow v} \cap E^{-}  \right| \leq 1 \right \}.
+% \end{equation}  
+% The edge $\tilde{e}_{uv}$ connects two neighboring connected components of the spanning forest $A^+$. Since $\mathcal{G}$ is connected, from \autoref{prop:A_connected} it follows that $\Pi_{u \rightarrow v}^- \neq \emptyset$. Let us now define the weakest edge $\bar{p}(\pi)$ of a path $\pi$:
+% \begin{equation}
+% \bar{p}(\pi) \equiv \argmin_{p\in \pi}  (w(p))
+% \end{equation}
+% and the set of the weakest edges of all paths defined in (\ref{eq:set_of_paths_in_A}) connecting $u$ and $v$:
+% \begin{equation}
+% \bar{P}_{u \rightarrow v} = \left\{ \bar{p}(\pi) \, \big| \,\pi \in \Pi_{u \rightarrow v}^- \right\}.
+% \end{equation}
+% We now want to prove that it exists at least one path in $\Pi_{u \rightarrow v}^-$ fulfilling condition \hyperref[cond_3]{3}. By contradiction let us assume the opposite and that edge $\tilde{e}_{uv}$ is stronger than all other paths in $\Pi_{u \rightarrow v}^-$ connecting $u$ and $v$:
+% \begin{equation}
+% w(\tilde{e}_{uv}) > w(p), \quad \quad \forall p \in \bar{P}_{u \rightarrow v}.
+% \end{equation}
+% In this case we can then construct an new feasible active set $A'= A \cup \{\tilde{e}_{uv}\} \setminus \bar{P}_{u \rightarrow v}$ not violating any path-constraints. We then note that $T(A')>T(A)$, which is a contradiction.  
 \end{proof}
 
 
